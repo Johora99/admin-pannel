@@ -13,9 +13,7 @@ router.post('/register', async (req, res) => {
     const { name, email, password } = req.body;
     if (!name || !email || !password)
       return res.status(400).json({ message: 'Name, email, password required.' });
-
     const passwordHash = await bcrypt.hash(password, 10);
-
     const newUser = new User({
       name,
       email,
@@ -23,11 +21,8 @@ router.post('/register', async (req, res) => {
       passwordHash,
       status: 'unverified',
     });
-
     await newUser.save();
-
     res.json({ message: 'Registered. Confirmation email will be sent.' });
-
     // send email asynchronously
     (async () => {
       try {
@@ -53,7 +48,6 @@ router.get('/confirm-email', async (req, res) => {
   try {
     const { token } = req.query;
     if (!token) return res.status(400).send('Invalid link');
-
     const decoded = jwt.verify(token, process.env.EMAIL_TOKEN_SECRET);
     const user = await User.findOne({ normalizedEmail: decoded.email.toLowerCase() });
     if (!user) return res.status(404).send('User not found');
@@ -62,7 +56,6 @@ router.get('/confirm-email', async (req, res) => {
       user.status = 'active';
       await user.save();
     }
-
     // Redirect to frontend login page with query param
     res.redirect(`${process.env.FRONTEND_URL}/?verified=true`);
   } catch (err) {
