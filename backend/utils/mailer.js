@@ -1,29 +1,29 @@
-const nodemailer = require('nodemailer');
+const nodemailer = require("nodemailer");
 
 const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: Number(process.env.SMTP_PORT) || 587,
-  secure: false, // true for 465, false for 587
+  host: "smtp.gmail.com",
+  port: 587,
+  secure: false, // use true for port 465
   auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
+    user: "pinku.roza09@gmail.com",      // your Gmail
+    pass: "sknnkbdaqiydyrql",            // your Gmail App Password (16 chars)
   },
 });
 
 transporter.verify((error, success) => {
   if (error) {
-    console.error("SMTP Connection Failed:", error);
+    console.error("❌ SMTP Connection Failed:", error);
   } else {
-    console.log("SMTP Ready ✅");
+    console.log("✅ SMTP Ready");
   }
 });
 
 async function sendConfirmationEmail(to, link) {
   try {
     const info = await transporter.sendMail({
-      from: `"My Project" <${process.env.SMTP_USER}>`,
+      from: `"My Project" <pinku.roza09@gmail.com>`,  // must match auth.user
       to,
-      subject: 'Confirm your account',
+      subject: "Confirm your account",
       html: `
         <h2>Welcome!</h2>
         <p>Click the button below to confirm your account:</p>
