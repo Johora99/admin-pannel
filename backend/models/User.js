@@ -14,6 +14,7 @@ const UserSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now }
 });
 
+
 UserSchema.index({ normalizedEmail: 1 }, { unique: true });
 
 
