@@ -4,6 +4,7 @@ import Toolbar from './Toolbar';
 import useAxiosSecure from '../Hooks/useAxiosSecure';
 import Toast from './Toast';
 import ConfirmationModal from './ConfirmationModal';
+import useAuth from '../Hooks/useAuth';
 
 export default function UserTable() {
   const [users, setUsers] = useState([]);
@@ -14,7 +15,7 @@ export default function UserTable() {
   const [hoveredRow, setHoveredRow] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [action, setAction] = useState(null);
-
+  const {user} = useAuth()
   const axiosSecure = useAxiosSecure();
   useEffect(() => {
     fetchUsers();
@@ -62,25 +63,32 @@ export default function UserTable() {
   }
 
   async function handleAction(action) {
-    try {
-      if (action === 'delete-unverified') {
-        setAction(action);
-        setIsModalOpen(true);
-        return;
-      } else {
-        const ids = selectedIds();
-        if (ids.length === 0) {
-          setMessage({ type: 'error', text: 'Select at least one user.' });
-          return;
-        }
-        await axiosSecure.post(`/api/admin/${action}`, { ids });
-        setMessage({ type: 'success', text: `${action} succeeded.` });
-        fetchUsers();
-      }
-    } catch (err) {
-      setMessage({ type: 'error', text: 'Operation failed.' });
+  try {
+    if (action === 'delete-unverified') {
+      setAction(action);
+      setIsModalOpen(true);
+      return;
     }
+if (action === 'select-non-current') {
+  const currentUserEmail = localStorage.getItem('userEmail'); 
+  const nonCurrentUsers = users.filter(u => u.email !== currentUserEmail);
+  const allIds = new Set(nonCurrentUsers.map(u => u._id));
+  setSelected(allIds);
+  setSelectAll(false); 
+  return;
+}
+    const ids = selectedIds();
+    if (ids.length === 0) {
+      setMessage({ type: 'error', text: 'Select at least one user.' });
+      return;
+    }
+    await axiosSecure.post(`/api/admin/${action}`, { ids });
+    setMessage({ type: 'success', text: `${action} succeeded.` });
+    fetchUsers();
+  } catch (err) {
+    setMessage({ type: 'error', text: 'Operation failed.' });
   }
+}
 
   function handleLogout() {
     localStorage.removeItem('token');

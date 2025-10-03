@@ -56,5 +56,19 @@ router.post('/delete-unverified', async (req, res) => {
     res.json({ message: 'Deleted unverified users.' });
   } catch (e) { res.status(500).json({ message: 'Delete unverified failed.' }); }
 });
+router.get('/users/non-current', async (req, res) => {
+  try {
+    const currentAdminId = req.user._id;
+    const users = await User.find(
+      { _id: { $ne: currentAdminId } }, 
+      'name email status lastLogin createdAt'
+    ).sort({ lastLogin: -1 });
+
+    res.json(users);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Failed to fetch non-current users.' });
+  }
+});
 
 module.exports = router;

@@ -1,13 +1,15 @@
-// Toolbar.jsx
 import React from 'react';
-import { FaTrash, FaLockOpen, FaUserLock } from 'react-icons/fa';
+import { FaTrash, FaLockOpen, FaUserLock, FaUsers } from 'react-icons/fa';
 
 /*
  Props:
   - selectedCount (number)
   - onAction(actionName)  // 'block' | 'unblock' | 'delete' | 'delete-unverified'
 */
-export default function Toolbar({ selectedCount, onAction }) {
+export default function Toolbar({ selectedCount, onAction, onSelectNonCurrent }) {
+
+
+
   return (
     <div className="flex items-center gap-2 mb-3">
       {/* Block: text button (requirement) */}
@@ -48,6 +50,15 @@ export default function Toolbar({ selectedCount, onAction }) {
       >
         <FaUserLock />
       </button>
+{/* Select non-current users */}
+<button
+  onClick={() => onAction('select-non-current')}
+  className="p-2 border rounded cursor-pointer"
+  title="Select all non-current users"
+>
+  <FaUsers className="text-gray-700" />
+</button>
+
 
       <div className="ml-auto text-sm text-gray-600">
         Selected: <strong>{selectedCount}</strong>

@@ -18,6 +18,9 @@ export default function Register() {
       const res = await axiosPublic.post('/api/auth/register', { name, email, password });
       console.log(res)
       setMsg({ type: 'success', text: res.data.message || 'Registered. Check email.' });
+    setName("");
+    setEmail("");
+    setPassword("");
     } catch (err) {
       console.log(err)
       setMsg({ type: 'error', text: err.response?.data?.message || 'Registration failed.' });
